@@ -218,6 +218,25 @@
     padding: 0;
 }
 
+.itable-stats {
+    width: 100%
+}
+
+.itable-cells {
+    text-align: center;
+    padding: 0;
+}
+
+.table-stats {
+    width: 100%
+}
+
+.table-cells {
+    text-align: center;
+    padding: 0;
+	border: 1px solid;
+}
+
 .card-bullet-line {
     font-size: inherit;
     color: black;

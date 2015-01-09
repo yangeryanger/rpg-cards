@@ -84,7 +84,6 @@ function card_element_ruler(params, card_data, options) {
     var color = card_data_color_front(card_data, options);
     var fill = 'fill="' + color + '"';
     var stroke = 'stroke="' + color + '"';
-
     var result = "";
     result += '<svg class="card-ruler" height="1" width="100" viewbox="0 0 100 1" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">';
     result += '    <polyline points="0,0 100,0.5 0,1" ' + fill + '></polyline>';
@@ -129,6 +128,10 @@ function card_element_description(params, card_data, options) {
     return result;
 }
 
+function card_element_comment(params, card_data, options) {
+	return '<!-- '+ params +'/-->';
+}
+
 function card_element_text(params, card_data, options) {
     var result = "";
     result += '<div class="card-element card-description-line">';
@@ -150,7 +153,6 @@ function card_element_dndstats(params, card_data, options) {
         }
         mods[i] = "&nbsp;(" + mod + ")";
     }
-
     var result = "";
     result += '<table class="card-stats">';
     result += '    <tbody><tr>';
@@ -182,6 +184,38 @@ function card_element_bullet(params, card_data, options) {
     return result;
 }
 
+function card_element_itable(params, card_data, options) {
+	if (Math.floor(params[0]) != params[0] && !$.isNumeric(params[0])) return '<div><i>bad itable</i></div>';
+	var result = "";
+	result += '<table class="itable-stats">';
+    result += '    <tbody><tr>';
+	for (var i = 1; i < parseInt(params[0]) + 1; ++i) {
+		if (params[i] == '') params[i] = '&nbsp;';
+		if (params[i] == 'undefined') params[i] = '&nbsp;';
+		result += '      <td class="itable-cells">' + params[i] || '' + '</td>';
+	}
+    result += '    </tr>';
+    result += '  </tbody>';
+    result += '</table>';
+    return result;
+}
+
+function card_element_table(params, card_data, options) {
+	if (Math.floor(params[0]) != params[0] && !$.isNumeric(params[0])) return '<div><i>bad table</i></div>';
+	var result = "";
+	result += '<table class="table-stats">';
+    result += '    <tbody><tr>';
+	for (var i = 1; i < parseInt(params[0]) + 1; ++i) {
+		if (params[i] == '') params[i] = '&nbsp;';
+		if (params[i] == 'undefined') params[i] = '&nbsp;';
+		result += '      <td class="table-cells">' + params[i] || '' + '</td>';
+	}
+    result += '    </tr>';
+    result += '  </tbody>';
+    result += '</table>';
+    return result;
+}
+
 function card_element_section(params, card_data, options) {
     var color = card_data_color_front(card_data, options);
     var section = params[0] || "";
@@ -209,10 +243,13 @@ var card_element_generators = {
     boxes: card_element_boxes,
     description: card_element_description,
     dndstats: card_element_dndstats,
+	itable: card_element_itable,
+	table: card_element_table,
     text: card_element_text,
     bullet: card_element_bullet,
     fill: card_element_fill,
     section: card_element_section,
+	comment: card_element_comment,
     disabled: card_element_empty
 };
 
@@ -257,14 +294,12 @@ function card_generate_color_gradient_style(color, options) {
 function card_generate_front(data, options) {
     var color = card_data_color_front(data, options);
     var style_color = card_generate_color_style(color, options);
-
     var result = "";
     result += '<div class="card card-size-' + options.card_size + '" ' + style_color + '>';
     result += card_element_icon(data, options);
     result += card_element_title(data, options);
     result += card_generate_contents(data.contents, data, options);
     result += '</div>';
-
     return result;
 }
 
@@ -273,7 +308,6 @@ function card_generate_back(data, options) {
     var style_color = card_generate_color_style(color, options);
     var style_gradient = card_generate_color_gradient_style(color, options);
     var icon = card_data_icon_back(data, options);
-
     var result = "";
     result += '<div class="card card-size-' + options.card_size + '" ' + style_color + '>';
     result += '  <div class="card-back" ' + style_gradient + '>';
@@ -282,17 +316,14 @@ function card_generate_back(data, options) {
     result += '    </div>';
     result += '  </div>';
     result += '</div>';
-
     return result;
 }
 
 function card_generate_empty(count, options) {
     var style_color = card_generate_color_style("white");
-
     var result = "";
     result += '<div class="card card-size-' + options.card_size + '" ' + style_color + '>';
     result += '</div>';
-
     return card_repeat(result, count);
 }
 
@@ -355,8 +386,7 @@ function card_pages_interleave_cards(front_cards, back_cards, options) {
 }
 
 function card_pages_wrap(pages, options) {
-    var size = options.page_size || "A4";
-
+    var size = options.page_size || "25x35";
     var result = "";
     for (var i = 0; i < pages.length; ++i) {
         var style = "";
@@ -382,7 +412,6 @@ function card_pages_generate_style(options) {
         case "25x35": size = "2.5in 3.5in"; break;
         default: size = "auto";
     }
-
     var result = "";
     result += "<style>\n";
     result += "@page {\n";
